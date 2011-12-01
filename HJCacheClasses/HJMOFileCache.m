@@ -20,7 +20,7 @@
 
 
 -(HJMOFileCache*)initWithRootPath:(NSString*)root {
-	[super init];
+	self = [super init];
 	isCounting = NO;
 	fileCount = 0;
 	byteCount = 0;
@@ -50,7 +50,7 @@
 				   fileCountLimit:(long)countLimit
 					 fileAgeLimit:(NSTimeInterval)ageLimit  {
 
-	[self initWithRootPath:root];
+	self = [self initWithRootPath:root];
 	isCounting = isCounting_;
 	fileCountLimit = countLimit;
 	fileAgeLimit = ageLimit;

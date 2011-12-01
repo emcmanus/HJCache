@@ -24,6 +24,8 @@
 @synthesize loadingWheel;
 @synthesize index;
 
+@synthesize contentMode;
+
 
 - (id)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
@@ -34,6 +36,8 @@
 		onImageTap = nil;
 		index = -1;
 		self.userInteractionEnabled = NO; //because want to treat it like a UIImageView. Just turn this back on if you want to catch taps.
+        
+        self.contentMode = UIViewContentModeScaleAspectFit;
     }
     return self;
 }
@@ -132,7 +136,7 @@
 	
 	[imageView removeFromSuperview];
 	self.imageView = [[[UIImageView alloc] initWithImage:theImage] autorelease];
-	imageView.contentMode = UIViewContentModeScaleAspectFit;
+	imageView.contentMode = self.contentMode;
 	imageView.autoresizingMask = ( UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight );
 	[self addSubview:imageView];
 	imageView.frame = self.bounds;
@@ -142,7 +146,7 @@
 	[loadingWheel stopAnimating];
 	[loadingWheel removeFromSuperview];
 	self.loadingWheel = nil;
-	self.hidden=NO;
+//	self.hidden=NO;
 	if (image!=nil) {
 		[callbackOnSetImage managedImageSet:self];
 	}
@@ -151,10 +155,28 @@
 -(void) showLoadingWheel {
 	[loadingWheel removeFromSuperview];
 	self.loadingWheel = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray] autorelease];
-	loadingWheel.center = self.center;
+    [self addSubview:loadingWheel];
+    
+    loadingWheel.frame = CGRectOffset(self.loadingWheel.frame, 
+                                      (self.frame.size.width - self.loadingWheel.frame.size.width) / 2.0,
+                                      (self.frame.size.height - self.loadingWheel.frame.size.height) / 2.0);
+    
 	loadingWheel.hidesWhenStopped=YES;
-	[self addSubview:loadingWheel];
 	[loadingWheel startAnimating];
+}
+
+- (void)layoutSubviews
+{
+    [super layoutSubviews];
+    
+    // Reposition spinner
+    if (self.loadingWheel)
+    {
+        self.loadingWheel.frame = CGRectMake((self.frame.size.width - self.loadingWheel.frame.size.width) / 2.0,
+                                             (self.frame.size.height - self.loadingWheel.frame.size.height) / 2.0,
+                                             self.loadingWheel.frame.size.width,
+                                             self.loadingWheel.frame.size.height);
+    }
 }
 
 -(void) setCallbackOnImageTap:(id)obj method:(SEL)m {

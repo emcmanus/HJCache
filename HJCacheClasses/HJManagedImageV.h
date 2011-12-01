@@ -48,6 +48,9 @@
 	NSInvocation* onImageTap;
 	int index; // optional; may be used to assign an ordering to a image.
 	int modification;
+    
+    // Image view content mode
+    UIViewContentMode contentMode;
 }
 
 @property int modification;
@@ -55,8 +58,10 @@
 @property (nonatomic, retain) UIImage* image;
 @property (nonatomic, retain) UIImageView* imageView;
 @property (nonatomic, retain) UIActivityIndicatorView* loadingWheel;
-@property (nonatomic, retain) id <HJManagedImageVDelegate> callbackOnSetImage;
-@property (nonatomic, retain) id <HJManagedImageVDelegate> callbackOnCancel;
+@property (nonatomic, assign) id <HJManagedImageVDelegate> callbackOnSetImage;
+@property (nonatomic, assign) id <HJManagedImageVDelegate> callbackOnCancel;
+
+@property (assign) UIViewContentMode contentMode;
 
 -(void) clear;
 -(void) markCancelled;

@@ -15,7 +15,7 @@
 @synthesize policy;
 @synthesize loadingHandlers;
 @synthesize memCache, fileCache;
-@synthesize connectionRunLoopMode;
+@synthesize connectionRunLoopMode; // Patch: load while scrolling
 
 
 
@@ -24,7 +24,7 @@
 }
 
 -(HJObjManager*) initWithLoadingBufferSize:(int)loadingBufferSize memCacheSize:(int)memCacheSize {
-	[super init];
+	self = [super init];
 	self.policy = [HJMOPolicy smallImgFastScrollLRUCachePolicy];
 	self.loadingHandlers = [HJCircularBuffer bufferWithCapacity:loadingBufferSize];
 	self.memCache = [HJCircularBuffer bufferWithCapacity:memCacheSize];
@@ -77,7 +77,6 @@
 	
 	//find handler for this oid in caches, or make a new handler.
 	HJMOHandler* handler;
-	BOOL handlerWasAllocedInThisCall=NO;
 	BOOL handlerWasFromLoadingBuffer=NO;
 	
 	//look in loadingHandlers first.
@@ -94,10 +93,9 @@
 		
 		if (handler==nil) {
 			//was not in loadingHandlers or memCache. have to make a new handler to load image
-			handler = [[HJMOHandler alloc] initWithOid:user.oid url:user.url objManager:self];
-      handler.connectionRunLoopMode = self.connectionRunLoopMode;
-      
-			handlerWasAllocedInThisCall=YES;
+			handler = [[[HJMOHandler alloc] initWithOid:user.oid url:user.url objManager:self] autorelease];
+            
+            handler.connectionRunLoopMode = self.connectionRunLoopMode; // Patch: load while scrolling
 		} else {
 			//NSLog(@"HJCache loading from memCache");
 		}
@@ -119,10 +117,6 @@
 		//  Can't just wait and cancel in dealloc because cell reuse typically means managed object users don't get
 		//  dealloced until a cell gets reused.
 		[bumpedHandler cancelLoading]; //usually nil, but could be non nil when scrolling fast
-	}
-	
-	if (handlerWasAllocedInThisCall) {
-		[handler release];
 	}
 	
 	return YES; //yes this object is now being managed. only NO if misused.

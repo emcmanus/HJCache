@@ -30,8 +30,8 @@
 	HJCircularBuffer* memCache;
 	HJMOHandler* flyweightManagedState;
 	HJMOFileCache* fileCache;
-  NSString* connectionRunLoopMode;
-  
+    
+    NSString* connectionRunLoopMode; // Patch: load while scrolling
 }
 
 /*
@@ -60,7 +60,7 @@
  The run loop mode to use for NSConnections. Only set for subsequent managed object.
  Leave nil to use the default.
  */
-@property (nonatomic, retain) NSString* connectionRunLoopMode;
+@property (nonatomic, retain) NSString* connectionRunLoopMode; // Patch: load while scrolling
 
 
 /*

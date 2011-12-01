@@ -29,7 +29,7 @@
 
 
 -(HJMOHandler*)initWithOid:(id)oid_ url:(NSURL*)url_  objManager:objManager_{
-	[super init];
+	self = [super init];
 	state = stateNew;
 	self.oid = oid_;
 	self.url = url_ ;
@@ -263,18 +263,17 @@
 								          timeoutInterval:policy.urlTimeoutTime];
   
   if(self.connectionRunLoopMode){
-    self.urlConn = [[NSURLConnection alloc]
+    self.urlConn = [[[NSURLConnection alloc]
                     initWithRequest:request
                     delegate:self
-                    startImmediately:NO];
+                    startImmediately:NO] autorelease];
     [self.urlConn scheduleInRunLoop:[NSRunLoop currentRunLoop]
                             forMode:self.connectionRunLoopMode];
     [self.urlConn start];
   }else{
-    self.urlConn = [[NSURLConnection alloc] initWithRequest:request delegate:self];
+    self.urlConn = [[[NSURLConnection alloc] initWithRequest:request delegate:self] autorelease];
   }
   
-	[urlConn release];
 	if (urlConn==nil) {
 		NSLog(@"HJMOHandler nil URLConnection for %@",url);
 		state=stateFailed;
